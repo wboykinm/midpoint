@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Midpoint BarFinder</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha256-sHwgyDk4CGNYom267UJX364ewnY4Bh55d53pxP5WDug= sha512-mkkeSf+MM3dyMWg3k9hcAttl7IVHe2BA1o/5xKLl4kBaP0bih7Mzz/DBy4y6cNZCHtE2tPgYBYH/KtEjOQYKxA==" crossorigin="anonymous">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.11.4/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+        #header {
+      	  position: absolute;
+      	  top: 0;
+      	  left: 0;
+      	  right: 0;
+      	  background: #6E4D74;
+      	  z-index: 999;
+      	  overflow: auto;
+      	  padding: 5px;
+      	  opacity: 0.95;
+      	  color: #fff;
+      	}
+    </style>
+</head>
+<body>
+
+<div id='map'></div>
+<div id='header'>
+  <div class='container'>
+    <h4>Bars within 5mi of a halfway point between two origins</h4>
+  </div>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fetch/0.10.1/fetch.min.js'></script>
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.11.4/mapbox-gl.js'></script>
+<script src='//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js'></script>
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZmFyYWRheTIiLCJhIjoiTUVHbDl5OCJ9.buFaqIdaIM3iXr1BOYKpsQ';
+
+  // set up the map
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/faraday2/cih81t9p40010k6lyiniupn8s'
+  });
+
+  // define the start/end points
+  var site1 = [-73.53873,41.05343],
+      site2 = [-73.41335,41.48143];
+
+  //define directions parameters:
+  var pathLine = { type: 'Feature', properties: {} };
+  var waypoints = site1[0] + ',' + site1[1] + ';' + site2[0] + ',' + site2[1];
+  var url = 'https://api.mapbox.com/v4/directions/mapbox.driving/' + waypoints + '.json?access_token=' + mapboxgl.accessToken;
+
+  // start the chain train . . .
+  map.on('style.load', function () {
+    // hit the directions api and select the route geometry
+    fetch(url).then(function(response) {
+    	return response.json();
+    }).then(function(j) {
+      pathLine.geometry = j.routes[0].geometry;
+      return pathLine;
+    })
+    .then(function(pathLine){
+      // add the route to the map
+      map.addSource("route", {
+        "type": "geojson",
+        "data": pathLine
+      });
+      map.addLayer({
+        "id": "route",
+        "type": "line",
+        "interactive": true,
+        "source": "route",
+        "layout": {
+          "line-join": "round",
+          "line-cap": "round"
+        },
+        "paint": {
+          "line-color": "#986579",
+          "line-width": 6,
+          "line-dasharray": [1,2],
+          "line-opacity": 0.8
+        }
+      });
+      return pathLine
+    })
+    .then(function(pathLine){
+      // figure out the length of the route
+      // (probably available in the response above,
+      // but what the hell)
+      return turf.lineDistance(pathLine,'miles');
+    })
+    .then(function(travelLength){
+      // find the location of the halfway point on the route
+      return turf.along(pathLine,(travelLength/2),'miles');
+    })
+    .then(function(midPoint){
+      // add the midpoint to the map
+      map.addSource("midPoint", {
+        "type": "geojson",
+        "data": {
+          "type": "FeatureCollection",
+          "features": [midPoint]
+        }
+      });
+      // add source as a layer and apply some styles
+      map.addLayer({
+        "id": "midPoint",
+        "interactive": true,
+        "type": "symbol",
+        "source": "midPoint",
+        "layout": {
+          "icon-image": "government_icon",
+          "text-field": "Midpoint",
+          "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+          "text-offset": [0, 0.6],
+          "text-anchor": "top"
+        },
+        "paint": {
+          "text-size": 12
+        }
+      });
+      return midPoint;
+    })
+    .then(function(midPoint){
+      // construct a call to the foursquare api for
+      // venues within 15km of the midpoint
+      var cId = 'RU314UA4LCIVRLMV5O2GZDK5W253WBGBBW3WMFACFMYGH0QH';
+      var cSecret = 'CL3JBZ1Q150J0X1L30LISC0VM21T2DP4N2IICRLVSSJMKMJU';
+      var foursquare_url = 'https://api.foursquare.com/v2/venues/explore' +
+        '?client_id=' + cId +
+        '&client_secret=' + cSecret +
+        '&v=20151115' +
+        //'&intent=browse' +
+        '&radius=8000' +
+        '&ll=' + midPoint.geometry.coordinates[1] + ',' + midPoint.geometry.coordinates[0] +
+        '&section=drinks' +
+        '&callback=';
+      return foursquare_url;
+    })
+    .then(function(foursquare_url){
+      // make the call to the foursquare api, add the results to the map
+      function status(response) {
+        if (response.status >= 200 && response.status < 300) {
+          return Promise.resolve(response)
+        } else {
+          return Promise.reject(new Error(response.statusText))
+        }
+      }
+
+      function json(response) {
+        return response.json()
+      }
+
+      fetch(foursquare_url)
+        .then(status)
+        .then(json)
+        .then(function(data) {
+          // add the results to the map
+          var barSites = data.response.groups[0].items;
+          var barGeojson = [];
+          for (var i = 0; i < barSites.length; i++) {
+            var barFeature = {
+              type: 'Feature',
+              properties: {
+                name: barSites[i].venue.name,
+                address: barSites[i].venue.location.address + ', ' + barSites[i].venue.location.city + ' ' + barSites[i].venue.location.state + ' ' + barSites[i].venue.location.postalCode,
+                url: barSites[i].venue.url
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [
+                  barSites[i].venue.location.lng,
+                  barSites[i].venue.location.lat
+                ]
+              }
+            }
+            barGeojson.push(barFeature);
+          }
+
+          // add the midpoint to the map
+          map.addSource("bars", {
+            "type": "geojson",
+            "data": {
+              "type": "FeatureCollection",
+              "features": barGeojson
+            }
+          });
+          // add source as a layer and apply some styles
+          map.addLayer({
+            "id": "bars",
+            "interactive": true,
+            "type": "symbol",
+            "source": "bars",
+            "layout": {
+              "icon-image": "wine-glass"
+            },
+            "paint": {}
+          });
+
+          // set up the interaction functions
+          map.on('click', function (e) {
+            map.featuresAt(e.point, {layer: 'bars', radius: 15, includeGeometry: true}, function (err, features) {
+              if (err) throw err;
+              if (features.length) {
+                var tooltip = new mapboxgl.Popup()
+                  .setLngLat(e.lngLat)
+                  .setHTML('<h1><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h1><p>' + features[0].properties.address + '</p>')
+                  .addTo(map);
+              }
+            });
+          });
+
+          map.on('mousemove', function (e) {
+            map.featuresAt(e.point, {layer: 'bars', radius: 15}, function (err, features) {
+              if (err) throw err;
+              map.getCanvas().style.cursor = features.length ? "pointer" : "";
+            });
+          });
+
+          // pan to cover the target locations
+          var mapExtent = turf.bboxPolygon(turf.extent(turf.featurecollection(barGeojson)));
+          var mapBounds = [];
+          mapBounds.push(mapExtent.geometry.coordinates[0][0], mapExtent.geometry.coordinates[0][2]);
+          map.fitBounds(mapBounds, { speed: 0.8, padding: 70 });
+
+        }).catch(function(error) {
+          console.log('Request failed', error);
+        });
+    })
+    .then(function(){
+      // do a ridiculous amount of work just to set a sane map view
+      // update: I now see the "padding" option. jkjk
+      var mapContext1 = turf.buffer(turf.point(site1),5,'miles'),
+          mapContext2 = turf.buffer(turf.point(site2),5,'miles');
+      var union = turf.union(mapContext1.features[0], mapContext2.features[0]);
+      var mapExtent = turf.bboxPolygon(turf.extent(union));
+      var mapBounds = [];
+      mapBounds.push(mapExtent.geometry.coordinates[0][0], mapExtent.geometry.coordinates[0][2]);
+      map.fitBounds(mapBounds);
+    });
+  });
+  // tah dah!
+</script>
+
+</body>
+</html>
