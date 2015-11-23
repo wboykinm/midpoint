@@ -112,13 +112,13 @@
         "source": "midPoint",
         "layout": {
           "icon-image": "government_icon",
-          "text-field": "Midpoint",
+          "text-field": "Travel Midpoint",
           "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
           "text-offset": [0, 0.6],
           "text-anchor": "top"
         },
         "paint": {
-          "text-size": 12
+          "text-size": 18
         }
       });
       return midPoint;
@@ -194,9 +194,15 @@
             "type": "symbol",
             "source": "bars",
             "layout": {
-              "icon-image": "wine-glass"
+              "icon-image": "dot",
+              "text-field": "{name}",
+              "text-font": ["Open Sans Italic", "Arial Unicode MS Bold"],
+              "text-offset": [0.6, 0.6],
+              "text-anchor": "left"
             },
-            "paint": {}
+            "paint": {
+                "text-size": 12
+            }
           });
 
           // set up the interaction functions
