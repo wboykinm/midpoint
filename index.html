@@ -302,12 +302,21 @@
     function success(position) {
       var latitude  = position.coords.latitude;
       var longitude = position.coords.longitude;
-      document.getElementById('start1').value = latitude;
+      rUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + longitude + ',' + latitude + '.json?access_token=' + mapboxgl.accessToken
+      //document.getElementById('start1').value = latitude;
+      // move to the current location
       map.easeTo({
         center:[longitude, latitude],
-        zoom:9,
-        pitch:50,
-        duration:3000
+        zoom:8,
+        pitch:35,
+        duration:2500
+      });
+      // get the best placename for it
+      fetch(rUrl).then(function(response) {
+      	return response.json();
+      }).then(function(h) {
+        document.getElementById('start1').value = h.features[2].place_name;
+        console.log(h.features[2].place_name);
       });
     };
     function error() {
