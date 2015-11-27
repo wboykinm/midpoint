@@ -42,7 +42,9 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <form class="navbar-form navbar-left" role="search">
         <div class="form-group">
+          <a> between </a>
           <input type="text" class="form-control" id='start1' placeholder="Start 1">
+          <a> and </a>
           <input type="text" class="form-control" id='start2' placeholder="Start 2">
         </div>
         <button type="submit" onclick='send()' class="btn btn-default">Go</button>
@@ -51,6 +53,8 @@
   </div>
 </nav>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fetch/0.10.1/fetch.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha256-KXn5puMvxCw+dAYznun+drMdG1IFl3agK0p/pqT9KAo= sha512-2e8qq0ETcfWRI4HJBzQiA3UoyFk6tbNyG+qSaIBZLyW9Xf3sWZHN/lxe9fTh1U45DpPf07yj94KsUHHWe4Yk1A==" crossorigin="anonymous"></script>
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.11.4/mapbox-gl.js'></script>
 <script src='//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js'></script>
 <script>
@@ -63,12 +67,12 @@
   var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/faraday2/cih81t9p40010k6lyiniupn8s',
-    center: [-96, 38],
-    zoom: 4,
+    center: [-96, 39],
+    zoom: 3.5,
     pitch: 0,
     bearing: 0
   })
-  //.on('style.load', getBars(startSites));
+  .on('style.load', geoFindMe());
 
   function getBars(origins){
     if (map.getSource('route')) {
@@ -139,10 +143,11 @@
         "type": "symbol",
         "source": "midPoint",
         "layout": {
-          "icon-image": "government_icon",
+          "icon-image": "pin2",
+          "icon-size":0.4,
           "text-field": "Travel Midpoint",
           "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-          "text-offset": [0, 0.6],
+          "text-offset": [0, 1.2],
           "text-anchor": "top"
         },
         "paint": {
@@ -258,10 +263,6 @@
           var mapBounds = [];
           mapBounds.push(mapExtent.geometry.coordinates[0][0], mapExtent.geometry.coordinates[0][2]);
           map.fitBounds(mapBounds, { speed: 0.8, padding: 70, bearing: 0 })
-            .then(function() {
-              map.easeTo({pitch:45});
-            })
-
         }).catch(function(error) {
           console.log('Request failed', error);
         });
@@ -289,9 +290,30 @@
   function send() {
     doGeocode()
       .then(function(sites) {
-        console.log(sites);
         getBars(sites);
       });
+  }
+
+  function geoFindMe() {
+    if (!navigator.geolocation){
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+    function success(position) {
+      var latitude  = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      document.getElementById('start1').value = latitude;
+      map.easeTo({
+        center:[longitude, latitude],
+        zoom:9,
+        pitch:50,
+        duration:3000
+      });
+    };
+    function error() {
+      alert('Unable to retrieve your location');
+    };
+    navigator.geolocation.getCurrentPosition(success, error);
   }
 
 </script>
