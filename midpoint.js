@@ -1,8 +1,5 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZmFyYWRheTIiLCJhIjoiTUVHbDl5OCJ9.buFaqIdaIM3iXr1BOYKpsQ';
 
-// define the start/end points
-var startSites = [[-73.53873,41.05343],[-73.41335,41.48143]];
-
 // set up the map
 var map = new mapboxgl.Map({
   container: 'map',
@@ -15,12 +12,6 @@ var map = new mapboxgl.Map({
 .on('style.load', geoFindMe());
 
 function getBars(origins){
-  if (map.getSource('route')) {
-    map.removeSource('route');
-    map.removeSource('midPoint');
-    map.removeSource('bars');
-  };
-
   //define directions parameters:
   var pathLine = { type: 'Feature', properties: {} };
   var waypoints = origins[0][0] + ',' + origins[0][1] + ';' + origins[1][0] + ',' + origins[1][1];
@@ -263,7 +254,6 @@ function geoFindMe() {
     var latitude  = position.coords.latitude;
     var longitude = position.coords.longitude;
     rUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' + longitude + ',' + latitude + '.json?access_token=' + mapboxgl.accessToken
-    //document.getElementById('start1').value = latitude;
     // move to the current location
     map.easeTo({
       center:[longitude, latitude],
@@ -275,7 +265,7 @@ function geoFindMe() {
     fetch(rUrl).then(function(response) {
       return response.json();
     }).then(function(h) {
-      document.getElementById('start1').value = h.features[2].place_name;
+      document.getElementById('start1').value = h.features[1].place_name;
     });
   };
   function error() {
