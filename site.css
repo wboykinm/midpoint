@@ -1,0 +1,51 @@
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+#header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #6E4D74;
+  z-index: 999;
+  overflow: auto;
+  padding: 5px;
+  opacity: 0.95;
+  color: #fff;
+}
+
+/*
+ * Open dropdowns on hover instead of click.
+ */
+@media (min-width: 768px) {
+  .dropdown:hover {
+    background: #e7e7e7;
+  }
+  .dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+}
+
+/*
+ * The following is needed since the dropdowns are <div> elements instead
+ * of <a> elements
+ */
+.nav > li > div {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  cursor: default;
+}
+.navbar-nav > li > div {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  line-height: 20px;
+}
+.navbar-default .navbar-nav > li > div {
+  color: rgb(119, 119, 119);
+}
+.navbar-collapse.collapse {
+  display: none;
+}
+.dropdown-open {
+  background: #e7e7e7;
+}
