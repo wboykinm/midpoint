@@ -40,10 +40,10 @@ function getBars(origins){
         "line-cap": "round"
       },
       "paint": {
-        "line-color": "#2B3E51",
-        "line-width": 6,
-        "line-dasharray": [1,2],
-        "line-opacity": 0.9
+        "line-color": "#2647A1",
+        "line-width": 5,
+        //"line-dasharray": [1,2],
+        "line-opacity": 0.7
       }
     });
     return pathLine
@@ -258,7 +258,7 @@ function geoFindMe() {
     map.easeTo({
       center:[longitude, latitude],
       zoom:8,
-      pitch:45,
+      pitch:55,
       duration:2500
     });
     // get the best placename for it
