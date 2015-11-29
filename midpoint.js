@@ -64,11 +64,25 @@ function getBars(origins){
     return turf.lineDistance(pathLine,'miles');
   })
   .then(function(travelLength){
+    // figure out the best radius based on total distance
+    function findRadius(totalDistance) {
+      if (totalDistance > 200 ) {
+        return 20
+      } else if (totalDistance < 20 ) {
+        return 2
+      } else {
+        return totalDistance/10
+      }
+    }
     // find the location of the halfway point on the route
-    return turf.along(pathLine,(travelLength/2),'miles');
+    var midPoint = turf.along(pathLine,(travelLength/2),'miles');
+    // add the best radius
+    midPoint.properties['radius'] = findRadius(travelLength);
+    return midPoint;
   })
   .then(function(midPoint){
     // add the midpoint to the map
+    console.log(midPoint);
     map.addSource("midPoint", {
       "type": "geojson",
       "data": {
@@ -98,7 +112,9 @@ function getBars(origins){
   })
   .then(function(midPoint){
     // construct a call to the foursquare api for
-    // venues within 15km of the midpoint
+    // venues of the selected type within an appropriate
+    // distance of the midpoint
+    var venueType = document.getElementsByClassName('venueType active')[0].id;
     var cId = 'RU314UA4LCIVRLMV5O2GZDK5W253WBGBBW3WMFACFMYGH0QH';
     var cSecret = 'CL3JBZ1Q150J0X1L30LISC0VM21T2DP4N2IICRLVSSJMKMJU';
     var foursquare_url = 'https://api.foursquare.com/v2/venues/explore' +
@@ -106,9 +122,9 @@ function getBars(origins){
       '&client_secret=' + cSecret +
       '&v=20151115' +
       //'&intent=browse' +
-      '&radius=8000' +
+      '&radius=' + (midPoint.properties.radius * 1609.344) +
       '&ll=' + midPoint.geometry.coordinates[1] + ',' + midPoint.geometry.coordinates[0] +
-      '&section=drinks' +
+      '&section=' + venueType +
       '&callback=';
     return foursquare_url;
   })
@@ -134,22 +150,25 @@ function getBars(origins){
         var barSites = data.response.groups[0].items;
         var barGeojson = [];
         for (var i = 0; i < barSites.length; i++) {
-          var barFeature = {
-            type: 'Feature',
-            properties: {
-              name: barSites[i].venue.name,
-              address: barSites[i].venue.location.address + ', ' + barSites[i].venue.location.city + ' ' + barSites[i].venue.location.state + ' ' + barSites[i].venue.location.postalCode,
-              url: barSites[i].venue.url
-            },
-            geometry: {
-              type: 'Point',
-              coordinates: [
-                barSites[i].venue.location.lng,
-                barSites[i].venue.location.lat
-              ]
+          if (barSites[i].venue.rating > 7) {
+            var barFeature = {
+              type: 'Feature',
+              properties: {
+                name: barSites[i].venue.name,
+                address: barSites[i].venue.location.formattedAddress,
+                url: 'https://foursquare.com/v/' + barSites[i].venue.id,
+                rating: barSites[i].venue.rating
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [
+                  barSites[i].venue.location.lng,
+                  barSites[i].venue.location.lat
+                ]
+              }
             }
+            barGeojson.push(barFeature);
           }
-          barGeojson.push(barFeature);
         }
 
         // add the midpoint to the map
@@ -167,7 +186,8 @@ function getBars(origins){
           "type": "symbol",
           "source": "bars",
           "layout": {
-            "icon-image": "beer2",
+            "icon-image": "pin2",
+            "icon-size":0.2,
             "text-field": "{name}",
             "text-font": ["Open Sans Italic", "Arial Unicode MS Bold"],
             "text-offset": [0.6, 0.6],
@@ -202,7 +222,7 @@ function getBars(origins){
         var mapExtent = turf.bboxPolygon(turf.extent(turf.featurecollection(barGeojson)));
         var mapBounds = [];
         mapBounds.push(mapExtent.geometry.coordinates[0][0], mapExtent.geometry.coordinates[0][2]);
-        map.fitBounds(mapBounds, { speed: 0.8, padding: 70, bearing: 0 })
+        map.fitBounds(mapBounds, { speed: 0.8, padding: 100, bearing: 0 })
       }).catch(function(error) {
         console.log('Request failed', error);
       });
@@ -248,7 +268,7 @@ function geoFindMe() {
     map.easeTo({
       center:[longitude, latitude],
       zoom:8,
-      pitch:35,
+      pitch:45,
       duration:2500
     });
     // get the best placename for it
@@ -256,11 +276,18 @@ function geoFindMe() {
       return response.json();
     }).then(function(h) {
       document.getElementById('start1').value = h.features[2].place_name;
-      console.log(h.features[2].place_name);
     });
   };
   function error() {
     alert('Unable to retrieve your location');
   };
   navigator.geolocation.getCurrentPosition(success, error);
+}
+
+function typeClick(elem) {
+    var a = document.getElementsByClassName('venueType');
+    for (i = 0; i < a.length; i++) {
+        a[i].classList.remove('active')
+    }
+    elem.classList.add('active');
 }

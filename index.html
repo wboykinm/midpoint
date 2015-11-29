@@ -7,6 +7,7 @@
   <title>Midpoint BarFinder</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" rel="stylesheet" integrity="sha256-sHwgyDk4CGNYom267UJX364ewnY4Bh55d53pxP5WDug= sha512-mkkeSf+MM3dyMWg3k9hcAttl7IVHe2BA1o/5xKLl4kBaP0bih7Mzz/DBy4y6cNZCHtE2tPgYBYH/KtEjOQYKxA==" crossorigin="anonymous">
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.11.4/mapbox-gl.css' rel='stylesheet' />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <link href='site.css' rel='stylesheet' />
 </head>
 <body>
@@ -25,12 +26,18 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <form class="navbar-form navbar-left" role="search">
           <div class="form-group">
+            <a>Find </a>
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-info venueType active" onclick='typeClick(this)' id='food'><i class="fa fa-cutlery"></i></button>
+              <button type="button" class="btn btn-info venueType" onclick='typeClick(this)' id='drinks'><i class="fa fa-glass"></i></button>
+              <button type="button" class="btn btn-info venueType" onclick='typeClick(this)' id='coffee'><i class="fa fa-coffee"></i></button>
+            </div>
             <a> between </a>
             <input type="text" class="form-control" id='start1' placeholder="Start 1">
-            <a> and </a>
+            <a> & </a>
             <input type="text" class="form-control" id='start2' placeholder="Start 2">
           </div>
-          <button type="button" onclick='send()' class="btn btn-default">Go</button>
+          <button type="button" onclick='send()' class="btn btn-success">Go</button>
         </form>
       </div>
     </div>
