@@ -1,9 +1,9 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoiZmFyYWRheTIiLCJhIjoiTUVHbDl5OCJ9.buFaqIdaIM3iXr1BOYKpsQ';
+mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4lI4kIzk9bjGFvg';
 
 // set up the map
 var map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/faraday2/cih81t9p40010k6lyiniupn8s',
+  style: 'mapbox://styles/landplanner/cihldjdg6000xsikxm85isfo5',
   center: [-96, 39],
   zoom: 3.5,
   pitch: 0,
@@ -88,9 +88,9 @@ function getBars(origins){
       "type": "symbol",
       "source": "midPoint",
       "layout": {
-        "icon-image": "pin2",
+        "icon-image": "pin3",
         "icon-size":0.4,
-        "text-field": "Travel Midpoint",
+        "text-field": "Midpoint",
         "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
         "text-offset": [0, 1.2],
         "text-anchor": "top"
@@ -177,8 +177,8 @@ function getBars(origins){
           "type": "symbol",
           "source": "bars",
           "layout": {
-            "icon-image": "pin2",
-            "icon-size":0.2,
+            "icon-image": "secondary_marker",
+            "icon-size":1,
             "text-field": "{name}",
             "text-font": ["Open Sans Italic", "Arial Unicode MS Bold"],
             "text-offset": [0.6, 0.6],
