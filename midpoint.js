@@ -12,6 +12,12 @@ var map = new mapboxgl.Map({
 .on('style.load', geoFindMe());
 
 function getBars(origins){
+  if (map.getSource('route')) {
+    map.removeSource('route');
+    map.removeSource('midPoint');
+    map.removeSource('bars');
+  };
+
   //define directions parameters:
   var pathLine = { type: 'Feature', properties: {} };
   var waypoints = origins[0][0] + ',' + origins[0][1] + ';' + origins[1][0] + ',' + origins[1][1];
