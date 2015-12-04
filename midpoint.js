@@ -283,6 +283,12 @@ function geoFindMe() {
   navigator.geolocation.getCurrentPosition(success, error);
 }
 
+function enterSend(e) {
+  if (e.keyCode == 13) {
+    send()
+  }
+}
+
 function typeClick(elem) {
     var a = document.getElementsByClassName('venueType');
     for (i = 0; i < a.length; i++) {

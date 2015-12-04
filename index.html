@@ -33,9 +33,9 @@
               <button type="button" class="btn btn-info venueType" onclick='typeClick(this)' id='coffee'><i class="fa fa-coffee"></i></button>
             </div>
             <a> between </a>
-            <input type="text" class="form-control" id='start1' placeholder="Start 1">
+            <input type="text" class="form-control" id='start1' placeholder="Start 1" onkeypress="return enterSend(event)">
             <a> & </a>
-            <input type="text" class="form-control" id='start2' placeholder="Start 2">
+            <input type="text" class="form-control" id='start2' placeholder="Start 2" onkeypress="return enterSend(event)">
           </div>
           <button type="button" onclick='send()' class="btn btn-success">Go</button>
         </form>
