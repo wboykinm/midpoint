@@ -13,6 +13,9 @@ var map = new mapboxgl.Map({
 
 function getBars(origins){
   if (map.getSource('route')) {
+    map.removeLayer('route');
+    map.removeLayer('midPoint');
+    map.removeLayer('bars');
     map.removeSource('route');
     map.removeSource('midPoint');
     map.removeSource('bars');
