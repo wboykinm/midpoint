@@ -49,3 +49,10 @@ body { margin:0; padding:0; }
 .dropdown-open {
   background: #e7e7e7;
 }
+
+div.form-group a,
+div.form-group div,
+div.form-group input {
+  padding-left: 6px;
+  padding-right: 6px;
+}
