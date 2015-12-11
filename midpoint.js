@@ -151,13 +151,15 @@ function getBars(origins){
         var barGeojson = [];
         for (var i = 0; i < barSites.length; i++) {
           if (barSites[i].venue.rating > 7) {
+            console.log(barSites[i].venue);
             var barFeature = {
               type: 'Feature',
               properties: {
                 name: barSites[i].venue.name,
                 address: barSites[i].venue.location.formattedAddress,
                 url: 'https://foursquare.com/v/' + barSites[i].venue.id,
-                rating: barSites[i].venue.rating
+                rating: barSites[i].venue.rating,
+                category: barSites[i].venue.categories[0].name
               },
               geometry: {
                 type: 'Point',
@@ -205,7 +207,7 @@ function getBars(origins){
             if (features.length) {
               var tooltip = new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
-                .setHTML('<h3><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h3><p>' + features[0].properties.address + '</p><hr><div class="btn-group-vertical" role="group" aria-label="..."><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from A</a><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start2').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from B</a></div>')
+                .setHTML('<h3><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h3><h4 class="small"><b>' + features[0].properties.category + '</b></h4><p>' + features[0].properties.address + '</p><hr><div class="btn-group-vertical" role="group" aria-label="..."><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from A</a><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start2').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from B</a></div>')
                 .addTo(map);
             }
           });
