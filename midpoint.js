@@ -66,8 +66,8 @@ function getBars(origins){
   .then(function(travelLength){
     // figure out the best radius based on total distance
     function findRadius(totalDistance) {
-      if (totalDistance > 200 ) {
-        return 20
+      if (totalDistance > 500 ) {
+        return 50
       } else if (totalDistance < 20 ) {
         return 2
       } else {
