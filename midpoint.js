@@ -151,7 +151,6 @@ function getBars(origins){
         var barGeojson = [];
         for (var i = 0; i < barSites.length; i++) {
           if (barSites[i].venue.rating > 7) {
-            console.log(barSites[i].venue);
             var barFeature = {
               type: 'Feature',
               properties: {
