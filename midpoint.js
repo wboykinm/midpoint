@@ -205,7 +205,7 @@ function getBars(origins){
             if (features.length) {
               var tooltip = new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
-                .setHTML('<h1><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h1><p>' + features[0].properties.address + '</p>')
+                .setHTML('<h1><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h1><p>' + features[0].properties.address + '</p><hr><a class="btn btn-info" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate</a>')
                 .addTo(map);
             }
           });
@@ -275,6 +275,7 @@ function geoFindMe() {
       return response.json();
     }).then(function(h) {
       document.getElementById('start1').value = h.features[1].place_name;
+      document.getElementById('start1').name = [longitude,latitude];
     });
   };
   function error() {

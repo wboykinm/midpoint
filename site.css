@@ -56,3 +56,7 @@ div.form-group input {
   padding-left: 6px;
   padding-right: 6px;
 }
+
+.mapboxgl-popup {
+  max-width: 260px;
+}
