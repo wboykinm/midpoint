@@ -205,7 +205,7 @@ function getBars(origins){
             if (features.length) {
               var tooltip = new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
-                .setHTML('<h1><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h1><p>' + features[0].properties.address + '</p><hr><a class="btn btn-info" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate</a>')
+                .setHTML('<h1><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h1><p>' + features[0].properties.address + '</p><hr><div class="btn-group-vertical" role="group" aria-label="..."><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from A</a><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start2').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from B</a></div>')
                 .addTo(map);
             }
           });
@@ -250,6 +250,7 @@ function doGeocode() {
 function send() {
   doGeocode()
     .then(function(sites) {
+      document.getElementById('start2').name = [sites[1][0],sites[1][1]];
       getBars(sites);
     });
 }
