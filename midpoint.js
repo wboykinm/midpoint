@@ -49,7 +49,7 @@ function getBars(origins){
         "line-cap": "round"
       },
       "paint": {
-        "line-color": "#2647A1",
+        "line-color": "#007AD8",
         "line-width": 5,
         //"line-dasharray": [1,2],
         "line-opacity": 0.7
@@ -205,7 +205,7 @@ function getBars(origins){
             if (features.length) {
               var tooltip = new mapboxgl.Popup()
                 .setLngLat(e.lngLat)
-                .setHTML('<h1><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h1><p>' + features[0].properties.address + '</p><hr><div class="btn-group-vertical" role="group" aria-label="..."><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from A</a><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start2').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from B</a></div>')
+                .setHTML('<h3><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h3><p>' + features[0].properties.address + '</p><hr><div class="btn-group-vertical" role="group" aria-label="..."><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from A</a><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start2').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from B</a></div>')
                 .addTo(map);
             }
           });
