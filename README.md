@@ -1,5 +1,5 @@
 # midpoint
-[Find highly-rated foursquare venues](http://wboykinm.github.io/midpoint/) within a given distance of the halfway point in a route, then navigate to them from both points of origin.
+[Find highly-rated foursquare venues](http://wboykinm.github.io/midpoint/) within a short distance of the halfway point in a route, then navigate to them from both points of origin.
 
 ![screen](screen.png)
 
