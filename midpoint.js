@@ -68,8 +68,8 @@ function getBars(origins){
     function findRadius(totalDistance) {
       if (totalDistance > 500 ) {
         return 50
-      } else if (totalDistance < 20 ) {
-        return 2
+      } else if (totalDistance < 5 ) {
+        return 0.5
       } else {
         return totalDistance/10
       }
