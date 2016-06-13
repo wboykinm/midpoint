@@ -252,6 +252,7 @@ function send() {
   doGeocode()
     .then(function(sites) {
       document.getElementById('start2').name = [sites[1][0],sites[1][1]];
+      document.getElementById('start1').name = [sites[0][0],sites[0][1]];
       getBars(sites);
     });
 }
