@@ -1,7 +1,11 @@
 # midpoint
-[Find highly-rated foursquare venues](http://wboykinm.github.io/midpoint/) within a short distance of the halfway point in a route, then navigate to them from both points of origin.
+[Find highly-rated foursquare venues](https://wboykinm.github.io/midpoint/) within a short distance of the halfway point in a route, then navigate to them from both points of origin.
 
 ![screen](screen.png)
+
+Also handles URL parameters: `start1=` and `start2=`, e.g.
+
+[`https://wboykinm.github.io/midpoint/?start1=tampa,fl&start2=richmond,va`](https://wboykinm.github.io/midpoint/?start1=tampa,fl&start2=richmond,va)
 
 ## Requirements
 This is a static app, but you'll need two API keys:
