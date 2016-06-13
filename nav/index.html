@@ -4,8 +4,8 @@
   <meta charset='utf-8' />
   <title></title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.1/mapbox-gl.js'></script>
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.1/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
   <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/paper/bootstrap.min.css" rel="stylesheet" integrity="sha256-hMIwZV8FylgKjXnmRI2YY0HLnozYr7Cuo1JvRtzmPWs= sha512-k+wW4K+gHODPy/0gaAMUNmCItIunOZ+PeLW7iZwkDZH/wMaTrSJTt7zK6TGy6p+rnDBghAxdvu1LX2Ohg0ypDw==" crossorigin="anonymous">  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.11.4/mapbox-gl.css' rel='stylesheet' />
   <style>
     body { margin:0; padding:0; }
@@ -14,8 +14,8 @@
 </head>
 <body>
 
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v1.0.0/mapbox-gl-directions.js'></script>
-<link rel='stylesheet' href='https://api.tiles.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v1.0.0/mapbox-gl-directions.css' type='text/css' />
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v2.0.0/mapbox-gl-directions.js'></script>
+<link rel='stylesheet' href='https://api.tiles.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v2.0.0/mapbox-gl-directions.css' type='text/css' />
 <div id='map'></div>
 <div id='directions'></div>
 <script>
@@ -47,11 +47,11 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4
 var map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/landplanner/cihldjdg6000xsikxm85isfo5',
-  center: JSON.parse("[" + queryString.start + "]"),
+  center: JSON.parse("[" + queryString.start + "]") || '[-79.4512, 43.6568]',
   zoom: 8
 });
 
-var directions = mapboxgl.Directions({
+var directions = new mapboxgl.Directions({
   unit: 'imperial',
   profile: 'driving',
   container: 'directions'
@@ -60,10 +60,17 @@ var directions = mapboxgl.Directions({
 map.addControl(directions);
 
 map.on('load', () => {
+  // get querystring params
   if (queryString.start) {
     directions.setOrigin(queryString.start);
     directions.setDestination(queryString.end);
   }
+  let xStart = queryString.start.split(',')[0],
+    yStart = queryString.start.split(',')[1],
+    xEnd = queryString.end.split(',')[0]
+    yEnd = queryString.end.split(',')[1]
+  // pan to directions
+  map.fitBounds([[xStart,yStart],[xEnd,yEnd]],{padding:100});
 });
 </script>
 
