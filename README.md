@@ -5,7 +5,7 @@
 
 Also handles URL parameters: `start1=` and `start2=`, e.g.
 
-[`https://wboykinm.github.io/midpoint/?start1=tampa,fl&start2=richmond,va`](https://wboykinm.github.io/midpoint/?start1=tampa,fl&start2=richmond,va)
+[`https://wboykinm.github.io/midpoint/?start1=60 California St San Francisco, CA &start2=361 Frederick St San Francisco, CA `](https://wboykinm.github.io/midpoint/?start1=60 California St San Francisco, CA &start2=361 Frederick St San Francisco, CA)
 
 ## Requirements
 This is a static app, but you'll need two API keys:
