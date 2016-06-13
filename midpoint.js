@@ -1,5 +1,29 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4lI4kIzk9bjGFvg';
 
+// get URL params if they're available
+var queryString = function () {
+  // This function is anonymous, is executed immediately and
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  }
+    return query_string;
+}();
+
 // set up the map
 var map = new mapboxgl.Map({
   container: 'map',
@@ -11,6 +35,16 @@ var map = new mapboxgl.Map({
 })
 .on('style.load', geoFindMe());
 
+map.on('load', () => {
+  if (queryString.start1) {
+    urlQuery = true;
+    document.getElementById('start1').value = queryString.start1;
+    document.getElementById('start2').value = queryString.start2;
+    send();
+  }
+});
+
+// run the midpoint query
 function getBars(origins){
   if (map.getSource('route')) {
     map.removeLayer('route');
@@ -260,6 +294,9 @@ function send() {
 function geoFindMe() {
   if (!navigator.geolocation){
     alert('Geolocation is not supported by your browser');
+    return;
+  }
+  if (queryString.start1) {
     return;
   }
   function success(position) {
