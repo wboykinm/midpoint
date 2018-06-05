@@ -1,4 +1,4 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoiY2ppMXlwMG0wMW8xNzNqb2I1cjY1dGNldSJ9.ZnH6dSVT7kBnaXFCd7Ffjwg';
+mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoiY2ppMXlwMG0wMW8xNzNqb2I1cjY1dGNldSJ9.ZnH6dSVT7kBnaXFCd7Ffjw';
 
 // get URL params if they're available
 var queryString = function () {
