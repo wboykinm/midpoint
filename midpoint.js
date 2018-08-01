@@ -1,4 +1,4 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoiY2ppMXlwMG0wMW8xNzNqb2I1cjY1dGNldSJ9.ZnH6dSVT7kBnaXFCd7Ffjw';
+mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoiY2prYWg2dmxqMG01NjNxdDRjM3BvamdmbCJ9.cOVujdQG3QqhnjgEvAKc-w';
 
 // get URL params if they're available
 var queryString = function () {
@@ -116,7 +116,7 @@ function getBars(origins){
   })
   .then(function(midPoint){
     // add the midpoint to the map
-    console.log(midPoint);
+    //console.log(midPoint);
     map.addSource("midPoint", {
       "type": "geojson",
       "data": {
@@ -139,7 +139,7 @@ function getBars(origins){
         "text-anchor": "top"
       },
       "paint": {
-        "text-size": 18
+        //"text-size": 18
       }
     });
     return midPoint;
@@ -175,24 +175,28 @@ function getBars(origins){
     function json(response) {
       return response.json()
     }
-
+    //console.log(foursquare_url)
     fetch(foursquare_url)
       .then(status)
       .then(json)
       .then(function(data) {
         // add the results to the map
         var barSites = data.response.groups[0].items;
+        //console.log(barSites)
         var barGeojson = [];
         for (var i = 0; i < barSites.length; i++) {
-          if (barSites[i].venue.rating > 7) {
+          //if (barSites[i].venue.rating > 7) {
             var barFeature = {
               type: 'Feature',
               properties: {
                 name: barSites[i].venue.name,
-                address: barSites[i].venue.location.formattedAddress,
-                url: 'https://foursquare.com/v/' + barSites[i].venue.id,
-                rating: barSites[i].venue.rating,
-                category: barSites[i].venue.categories[0].name
+                address: barSites[i].venue.location.address || '',
+                city: barSites[i].venue.location.city || '',
+                state: barSites[i].venue.location.state || '',
+                zip: barSites[i].venue.location.postalCode || '',
+                url: 'https://foursquare.com/v/' + barSites[i].venue.id || '',
+                rating: barSites[i].venue.rating || '',
+                category: barSites[i].venue.categories[0].name || ''
               },
               geometry: {
                 type: 'Point',
@@ -203,7 +207,7 @@ function getBars(origins){
               }
             }
             barGeojson.push(barFeature);
-          }
+          //}
         }
 
         // add the midpoint to the map
@@ -229,31 +233,28 @@ function getBars(origins){
             "text-anchor": "left"
           },
           "paint": {
-            "text-size": 12
+            //"text-size": 12
           }
         });
 
         // set up the interaction functions
         map.on('click', function (e) {
-          map.featuresAt(e.point, {layer: 'bars', radius: 15, includeGeometry: true}, function (err, features) {
-            if (err) throw err;
-            if (features.length) {
-              var tooltip = new mapboxgl.Popup()
-                .setLngLat(e.lngLat)
-                .setHTML('<h3><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h3><h4 class="small"><b>' + features[0].properties.category + '</b></h4><p>' + features[0].properties.address + '</p><hr><div class="btn-group-vertical" role="group" aria-label="..."><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from A</a><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start2').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from B</a></div>')
-                .addTo(map);
-            }
-          });
+          var features = map.queryRenderedFeatures(e.point, {layers: ['bars']})
+          if (features.length) {
+            var tooltip = new mapboxgl.Popup()
+              .setLngLat(e.lngLat)
+              .setHTML('<h3><a href="' + features[0].properties.url + '" target="_blank">' + features[0].properties.name + '</a></h3><h4 class="small"><b>' + features[0].properties.category + '</b></h4><p>' + features[0].properties.address + '<br>' + features[0].properties.city + ', ' + features[0].properties.state + ' ' + features[0].properties.zip + '</p><hr><div class="btn-group-vertical" role="group" aria-label="..."><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start1').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from A</a><a class="btn btn-sm btn-success" target="_blank" href="nav?start=' + document.getElementById('start2').name + '&end=' + e.lngLat.lng + ',' + e.lngLat.lat + '">Navigate from B</a></div>')
+              .addTo(map);
+          }
         });
 
         map.on('mousemove', function (e) {
-          map.featuresAt(e.point, {layer: 'bars', radius: 15}, function (err, features) {
-            if (err) throw err;
-            map.getCanvas().style.cursor = features.length ? "pointer" : "";
-          });
+          var features = map.queryRenderedFeatures(e.point, {layers: ['bars']})
+          map.getCanvas().style.cursor = features.length ? "pointer" : "";
         });
 
         // pan to cover the target locations
+        //console.log(barGeojson)
         var mapExtent = turf.bboxPolygon(turf.extent(turf.featurecollection(barGeojson)));
         var mapBounds = [];
         mapBounds.push(mapExtent.geometry.coordinates[0][0], mapExtent.geometry.coordinates[0][2]);
